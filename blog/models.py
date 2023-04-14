@@ -32,7 +32,18 @@ class Post(models.Model):
     create_time = models.DateTimeField(auto_now=True)
 
 
-class PostImage(models.Model):
+class PostMedia(models.Model):
+    IMAGE = 1
+    VIDEO = 2
+    TYPE_CHOICES = (
+        (IMAGE, _('image')),
+        (VIDEO, _('video')),
+    )
+    media_type = models.PositiveSmallIntegerField(_('media_type'), choices=TYPE_CHOICES, default=IMAGE)
     image = models.ImageField(upload_to='posts/')
-    post = models.ForeignKey(
-        Post, on_delete=models.CASCADE, related_name='images')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='medias')
+    media_file = models.FileField(_("media_file"), upload_to='media/')
+
+    class Meta:
+        verbose_name = _('PostMedia')
+        verbose_name_plural = _("PostsMedia")
