@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
-from Account.models import Author
+from account.models import Author
 
 
 # Create your models here.
