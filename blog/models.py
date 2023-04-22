@@ -30,6 +30,9 @@ class Post(models.Model):
     description = models.TextField(null=True)
     create_time = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.title
+
 
 class PostMedia(models.Model):
     IMAGE = 1

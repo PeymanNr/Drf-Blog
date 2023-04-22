@@ -10,3 +10,6 @@ class Member(models.Model):
 
 class Author(models.Model):
     author = models.OneToOneField(Member, on_delete=models.CASCADE, related_name='authors')
+
+
+
