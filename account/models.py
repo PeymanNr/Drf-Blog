@@ -7,6 +7,9 @@ from django.db import models
 class Member(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users')
 
+    def __str__(self):
+        return self.user.username
+
 
 class Author(models.Model):
     author = models.OneToOneField(Member, on_delete=models.CASCADE, related_name='authors')

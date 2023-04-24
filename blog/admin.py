@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.admin import register
-from blog.models import Post, Category, PostMedia
+from blog.models import Post, Category, PostMedia, Comment
 
 
 # Register your models here.
@@ -18,3 +18,8 @@ class PostAdmin(admin.ModelAdmin):
 @register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
+
+
+@register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('title', 'user')
