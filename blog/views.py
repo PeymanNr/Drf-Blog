@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from blog.models import Category, Post, Comment
@@ -32,6 +33,8 @@ class PostDetailAPI(APIView):
 
 
 class CommentListAPI(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         comments = Comment.objects.all()
         serializer = CommentListSerializer(comments, many=True)
