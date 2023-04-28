@@ -1,9 +1,10 @@
 from rest_framework import status
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from blog.models import Category, Post, Comment
-from blog.serializers import PostDetailSerializer, PostListSerializer, CommentListSerializer
+from blog.serializers import PostDetailSerializer, PostListSerializer, CommentListSerializer, CommentCreateSerializer
 
 
 # Create your views here.
@@ -32,20 +33,20 @@ class PostDetailAPI(APIView):
         return Response(serializer.data)
 
 
-class CommentListAPI(APIView):
+class CommentListCreateAPI(ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
+    queryset = Comment.objects.all()
+    serializer_class = CommentCreateSerializer
 
-    def get(self, request, *args, **kwargs):
-        comments = Comment.objects.all()
-        serializer = CommentListSerializer(comments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
-    def post(self, request, *args, **kwargs):
-        comments = CommentListSerializer(data=request.data)
-        if comments.is_valid():
-            instance = comments.save()
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return CommentListSerializer
+        return self.serializer_class
+
+
 
 
 
