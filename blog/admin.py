@@ -22,4 +22,4 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'user')
+    list_display = ('title', 'member')

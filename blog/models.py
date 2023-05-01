@@ -48,6 +48,7 @@ class PostMedia(models.Model):
 
 class Comment(models.Model):
     title = models.CharField(max_length=50, verbose_name=_('name'))
-    user = models.ForeignKey(Member, related_name='comments', on_delete=models.CASCADE)
+    member = models.ForeignKey(Member, related_name='comments', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
+    reply = models.ForeignKey('self', related_name='replies', on_delete=models.CASCADE, null=True, blank=True)
