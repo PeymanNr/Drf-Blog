@@ -48,6 +48,7 @@ class CommentListCreateAPI(ListCreateAPIView):
         return self.serializer_class
 
 
+
 class CommentRetrieveAPI(RetrieveUpdateAPIView):
     serializer_class = CommentListSerializer
     queryset = Comment.objects.filter(reply__isnull=True)

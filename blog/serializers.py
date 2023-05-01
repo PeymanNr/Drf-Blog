@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from blog.models import Post, PostMedia, Category, Comment
 
 
@@ -35,6 +37,10 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('title', 'post')
+
+    def validate(self, attrs):
+        if len(attrs['title']) > 10:
+            raise ValidationError('Title cannot be more than 30 characters')
 
 
 class CommentUpdateSerializer(serializers.ModelSerializer):
