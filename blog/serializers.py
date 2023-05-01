@@ -24,11 +24,11 @@ class PostListSerializer(serializers.ModelSerializer):
 
 class CommentListSerializer(serializers.ModelSerializer):
     post = PostDetailSerializer()
-    # user = serializers.CharField(source='user.username')
+    member = serializers.CharField(source='member.user.username')
 
     class Meta:
         model = Comment
-        fields = ('title', 'user', 'post')
+        fields = ('id', 'title', 'member', 'post')
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):
@@ -36,5 +36,10 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ('title', 'post')
 
+
+class CommentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('title',)
 
 

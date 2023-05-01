@@ -51,3 +51,4 @@ class Comment(models.Model):
     member = models.ForeignKey(Member, related_name='comments', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
+    reply = models.ForeignKey('self', related_name='replies', on_delete=models.CASCADE, null=True, blank=True)
