@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from blog.models import Post, PostMedia
+from blog.models import Post, PostMedia, Category, Comment
 
 
 class PostMediaSerializer(serializers.ModelSerializer):
@@ -14,5 +14,32 @@ class PostDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('title', 'medias')
+
+
+class PostListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('title',)
+
+
+class CommentListSerializer(serializers.ModelSerializer):
+    post = PostDetailSerializer()
+    member = serializers.CharField(source='member.user.username')
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'title', 'member', 'post')
+
+
+class CommentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('title', 'post')
+
+
+class CommentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('title',)
 
 

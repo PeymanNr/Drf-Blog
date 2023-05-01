@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from account.models import Author
+from account.models import Author, Member
 
 
 # Create your models here.
@@ -16,11 +16,6 @@ class Category(models.Model):
     class Meta:
         verbose_name = _('category')
         verbose_name_plural = _("categories")
-
-
-class Comment(models.Model):
-    title = models.CharField(max_length=50, verbose_name=_('name'))
-    create_time = models.DateTimeField(auto_now=True)
 
 
 class Post(models.Model):
@@ -49,3 +44,11 @@ class PostMedia(models.Model):
     class Meta:
         verbose_name = _('PostMedia')
         verbose_name_plural = _("PostsMedia")
+
+
+class Comment(models.Model):
+    title = models.CharField(max_length=50, verbose_name=_('name'))
+    member = models.ForeignKey(Member, related_name='comments', on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
+    create_time = models.DateTimeField(auto_now_add=True)
+    reply = models.ForeignKey('self', related_name='replies', on_delete=models.CASCADE, null=True, blank=True)
