@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
-from blog.models import Post, PostMedia, Category, Comment
+from django.utils.translation import gettext_lazy as _
+from blog.models import Post, PostMedia, Comment
 
 
 class PostMediaSerializer(serializers.ModelSerializer):
@@ -10,37 +10,26 @@ class PostMediaSerializer(serializers.ModelSerializer):
         fields = ('media_type', 'media_file')
 
 
-class PostDetailSerializer(serializers.ModelSerializer):
-    medias = PostMediaSerializer(many=True)
-
-    class Meta:
-        model = Post
-        fields = ('title', 'medias')
-
-
 class PostListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('title',)
 
 
-class CommentListSerializer(serializers.ModelSerializer):
-    post = PostDetailSerializer()
-    member = serializers.CharField(source='member.user.username')
-
-    class Meta:
-        model = Comment
-        fields = ('id', 'title', 'member', 'post')
-
-
 class CommentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ('title', 'post')
+        fields = ('title', 'post', 'reply')
 
     def validate(self, attrs):
-        if len(attrs['title']) > 10:
-            raise ValidationError('Title cannot be more than 30 characters')
+        if len(attrs['title']) > 30:
+            raise ValidationError(_('Title cannot be more than 30 characters'))
+        return attrs
+
+    def validate_reply(self, attrs):
+        if attrs.reply is not None:
+            raise ValidationError(_('you can not reply to a reply recursively'))
+        return attrs
 
 
 class CommentUpdateSerializer(serializers.ModelSerializer):
@@ -49,3 +38,36 @@ class CommentUpdateSerializer(serializers.ModelSerializer):
         fields = ('title',)
 
 
+class CommentRepliesSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username')
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'title', 'user')
+
+
+class CommentListSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username')
+    replies = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'title', 'user', 'replies')
+
+    def get_replies(self, obj):
+        serializer = CommentRepliesSerializer(obj.replies.all(), many=True)
+        return serializer.data
+
+
+class PostDetailSerializer(serializers.ModelSerializer):
+    medias = PostMediaSerializer(many=True)
+    comments = serializers.SerializerMethodField()
+    author = serializers.CharField(source='author.author.username')
+
+    class Meta:
+        model = Post
+        fields = ('title', 'medias', 'author', 'comments')
+
+    def get_comments(self, obj):
+        serializer = CommentListSerializer(obj.comments.filter(reply__isnull=True), many=True)
+        return serializer.data

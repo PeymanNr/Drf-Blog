@@ -1,5 +1,6 @@
 from rest_framework import status
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, ListAPIView, CreateAPIView, \
+    RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -34,24 +35,30 @@ class PostDetailAPI(APIView):
         return Response(serializer.data)
 
 
-class CommentListCreateAPI(ListCreateAPIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Comment.objects.filter(reply__isnull=True)
+class CommentCreateAPI(CreateAPIView):
+    queryset = Comment.objects.all()
     serializer_class = CommentCreateSerializer
+    permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return CommentListSerializer
-        return self.serializer_class
+    # def get_serializer_class(self):
+    #     if self.request.method == 'GET':
+    #         return CommentListSerializer
+    #     return self.serializer_class
+    #
 
 
-
-class CommentRetrieveAPI(RetrieveUpdateAPIView):
+class CommentListAPI(ListAPIView):
+    queryset = Comment.objects.all()
     serializer_class = CommentListSerializer
-    queryset = Comment.objects.filter(reply__isnull=True)
+    permission_classes = (IsAuthenticated,)
+
+
+class CommentRetrieveAPI(RetrieveUpdateDestroyAPIView):
+    serializer_class = CommentListSerializer
+    queryset = Comment.objects.all()
     permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
@@ -59,6 +66,7 @@ class CommentRetrieveAPI(RetrieveUpdateAPIView):
             return CommentListSerializer
         return CommentUpdateSerializer
 
-    # def get_queryset(self):
-    #     qs = super().get_queryset()
-    #     return qs.fil~ter(user=self.request.user)
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(user=self.request.user)
+
