@@ -1,6 +1,7 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from account.models import Author, Member
+from account.models import Author
 
 
 # Create your models here.
@@ -28,6 +29,10 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = _('post')
+        verbose_name_plural = _("posts")
+
 
 class PostMedia(models.Model):
     IMAGE = 1
@@ -48,7 +53,14 @@ class PostMedia(models.Model):
 
 class Comment(models.Model):
     title = models.CharField(max_length=50, verbose_name=_('name'))
-    member = models.ForeignKey(Member, related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
     post = models.ForeignKey(Post, related_name='comments', on_delete=models.CASCADE)
     create_time = models.DateTimeField(auto_now_add=True)
     reply = models.ForeignKey('self', related_name='replies', on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('comment')
+        verbose_name_plural = _("comments")

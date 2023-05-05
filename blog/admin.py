@@ -11,7 +11,7 @@ class PostImageInline(admin.TabularInline):
 @register(Post)
 class PostAdmin(admin.ModelAdmin):
 
-    list_display = ('author', 'category', 'title', 'create_time',)
+    list_display = ('id', 'author', 'category', 'title', 'create_time',)
     inlines = [PostImageInline, ]
 
 
@@ -22,4 +22,4 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'member')
+    list_display = ('id', 'title', 'user', 'reply')

@@ -1,18 +1,18 @@
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.utils.translation import ugettext_lazy as _
 # Create your models here.
 
 
-class Member(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='users')
+class Author(models.Model):
+    author = models.OneToOneField(User, on_delete=models.CASCADE, related_name='authors')
 
     def __str__(self):
-        return self.user.username
+        return self.author
 
-
-class Author(models.Model):
-    author = models.OneToOneField(Member, on_delete=models.CASCADE, related_name='authors')
+    class Meta:
+        verbose_name = _('author')
+        verbose_name_plural = _("authors")
 
 
 
