@@ -29,6 +29,10 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = _('post')
+        verbose_name_plural = _("posts")
+
 
 class PostMedia(models.Model):
     IMAGE = 1
@@ -56,3 +60,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name = _('comment')
+        verbose_name_plural = _("comments")
