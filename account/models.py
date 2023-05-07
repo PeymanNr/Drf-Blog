@@ -8,7 +8,7 @@ class Author(models.Model):
     author = models.OneToOneField(User, on_delete=models.CASCADE, related_name='authors')
 
     def __str__(self):
-        return self.author
+        return self.author.username
 
     class Meta:
         verbose_name = _('author')
