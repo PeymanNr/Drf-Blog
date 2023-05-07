@@ -11,7 +11,7 @@ class PostImageInline(admin.TabularInline):
 @register(Post)
 class PostAdmin(admin.ModelAdmin):
 
-    list_display = ('id', 'author', 'category', 'title', 'create_time',)
+    list_display = ('author', 'category', 'title', 'create_time',)
     inlines = [PostImageInline, ]
 
 
