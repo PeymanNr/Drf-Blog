@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from blog.models import Category, Post, Comment
 from blog.serializers import PostDetailSerializer, PostListSerializer, CommentListSerializer, CommentCreateSerializer, \
     CommentUpdateSerializer
-from lib.pagnation import SmallPageNumberPagination
+from lib.pagnation import SmallPageNumberPagination, StandardPagination
+from lib.permissions import RelationExists
 
 
 # Create your views here.
@@ -55,7 +56,8 @@ class CommentListAPI(ListAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentListSerializer
     permission_classes = (IsAuthenticated,)
-    pagination_class = SmallPageNumberPagination
+    # pagination_class = SmallPageNumberPagination
+    pagination_class = StandardPagination
 
 
 class CommentRetrieveAPI(RetrieveUpdateDestroyAPIView):
@@ -77,6 +79,8 @@ class UserPostsListAPIView(ListAPIView):
     queryset = Post.objects.all()
     lookup_url_kwarg = 'author_id'
     serializer_class = PostDetailSerializer
+    pagination_class = StandardPagination
+    permission_classes = [IsAuthenticated, RelationExists]
     
     def get_queryset(self):
         qs = super().get_queryset()

@@ -64,3 +64,27 @@ class Comment(models.Model):
     class Meta:
         verbose_name = _('comment')
         verbose_name_plural = _("comments")
+
+
+class Relation(models.Model):
+    from_user = models.ForeignKey(Author, related_name='followings', on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('Relation')
+        verbose_name_plural = _("Relations")
+
+    def __str__(self):
+        return "{}>>{}".format(self.from_user.author.username, self.to_user.username)
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, related_name='likes', on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name='likes', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _('like')
+        verbose_name_plural = _("likes")
+
+    def __str__(self):
+        return "{}>>{}".format(self.user.username, self.post.id)
