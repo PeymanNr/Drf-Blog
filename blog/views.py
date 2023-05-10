@@ -8,6 +8,7 @@ from blog.models import Category, Post, Comment
 from blog.serializers import PostDetailSerializer, PostListSerializer, CommentListSerializer, CommentCreateSerializer, \
     CommentUpdateSerializer
 from lib.pagnation import SmallPageNumberPagination, StandardPagination
+from lib.permissions import RelationExists
 
 
 # Create your views here.
@@ -78,6 +79,8 @@ class UserPostsListAPIView(ListAPIView):
     queryset = Post.objects.all()
     lookup_url_kwarg = 'author_id'
     serializer_class = PostDetailSerializer
+    pagination_class = StandardPagination
+    permission_classes = [IsAuthenticated, RelationExists]
     
     def get_queryset(self):
         qs = super().get_queryset()

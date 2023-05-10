@@ -6,6 +6,6 @@ from account.models import Author
 
 @register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    list_display = ('author',)
+    list_display = ('author', 'id')
 
 
