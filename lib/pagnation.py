@@ -8,4 +8,4 @@ class SmallPageNumberPagination(PageNumberPagination):
 
 
 class StandardPagination(CursorPagination):
-    ordering = 'create_time'
+    ordering = 'post_id'
