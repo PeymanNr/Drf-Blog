@@ -8,9 +8,10 @@ from rest_framework.views import APIView
 from blog.models import Category, Post, Comment
 from blog.serializers import PostDetailSerializer, PostListSerializer, CommentListSerializer, CommentCreateSerializer, \
     CommentUpdateSerializer, LikeListSerializer
-from lib.pagnation import SmallPageNumberPagination, StandardPagination
+from lib.pagnation import StandardPagination
 from lib.permissions import RelationExists
 from rest_framework import viewsets
+from rest_framework.throttling import UserRateThrottle
 
 
 # Create your views here.
@@ -77,16 +78,16 @@ class CommentRetrieveAPI(RetrieveUpdateDestroyAPIView):
         return qs.filter(user=self.request.user)
 
 
-class AuthorPostsListAPIView(ListAPIView):
-    queryset = Post.objects.all()
-    lookup_url_kwarg = 'author_id'
-    serializer_class = PostDetailSerializer
-    pagination_class = StandardPagination
-    permission_classes = [IsAuthenticated, RelationExists]
-    
-    def get_queryset(self):
-        qs = super().get_queryset()
-        return qs.filter(author_id=self.kwargs[self.lookup_url_kwarg])
+# class AuthorPostsListAPIView(ListAPIView):
+#     queryset = Post.objects.all()
+#     lookup_url_kwarg = 'author_id'
+#     serializer_class = PostDetailSerializer
+#     pagination_class = StandardPagination
+#     permission_classes = [IsAuthenticated, RelationExists]
+#
+#     def get_queryset(self):
+#         qs = super().get_queryset()
+#         return qs.filter(author_id=self.kwargs[self.lookup_url_kwarg])
 
 
 class AuthorPostViewSet(viewsets.ModelViewSet):
@@ -95,6 +96,8 @@ class AuthorPostViewSet(viewsets.ModelViewSet):
     serializer_class = PostDetailSerializer
     pagination_class = StandardPagination
     permission_classes = [IsAuthenticated]
+    # throttle_classes = [UserRateThrottle]
+    throttle_scope = 'custom'
 
     def get_queryset(self):
         qs = super().get_queryset()
