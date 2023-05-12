@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, ListAPIView, CreateAPIView, \
     RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -6,9 +7,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from blog.models import Category, Post, Comment
 from blog.serializers import PostDetailSerializer, PostListSerializer, CommentListSerializer, CommentCreateSerializer, \
-    CommentUpdateSerializer
+    CommentUpdateSerializer, LikeListSerializer
 from lib.pagnation import SmallPageNumberPagination, StandardPagination
 from lib.permissions import RelationExists
+from rest_framework import viewsets
 
 
 # Create your views here.
@@ -75,7 +77,7 @@ class CommentRetrieveAPI(RetrieveUpdateDestroyAPIView):
         return qs.filter(user=self.request.user)
 
 
-class UserPostsListAPIView(ListAPIView):
+class AuthorPostsListAPIView(ListAPIView):
     queryset = Post.objects.all()
     lookup_url_kwarg = 'author_id'
     serializer_class = PostDetailSerializer
@@ -86,3 +88,33 @@ class UserPostsListAPIView(ListAPIView):
         qs = super().get_queryset()
         return qs.filter(author_id=self.kwargs[self.lookup_url_kwarg])
 
+
+class AuthorPostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    lookup_url_kwarg = 'post_id'
+    serializer_class = PostDetailSerializer
+    pagination_class = StandardPagination
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(author__author__username=self.kwargs['username'])
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return PostListSerializer
+        elif self.action == 'get_likes_list':
+            return LikeListSerializer
+        return self.serializer_class
+
+    @action(detail=True)
+    def get_likes_list(self, request, *args, **kwargs):
+        post = self.get_object()
+        queryset = post.likes.all()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

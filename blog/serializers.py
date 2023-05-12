@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from blog.models import Post, PostMedia, Comment
+from blog.models import Post, PostMedia, Comment, Like
 
 
 class PostMediaSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class PostMediaSerializer(serializers.ModelSerializer):
 class PostListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ('title',)
+        fields = ('id', 'title',)
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):
@@ -66,8 +66,17 @@ class PostDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('title', 'medias', 'author', 'comments')
+        fields = ('id', 'title', 'medias', 'author', 'comments')
 
     def get_comments(self, obj):
         serializer = CommentListSerializer(obj.comments.filter(reply__isnull=True), many=True)
         return serializer.data
+
+
+class LikeListSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username')
+
+    class Meta:
+        model = Like
+        fields = ('user',)
+
