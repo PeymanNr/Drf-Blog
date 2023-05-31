@@ -160,3 +160,5 @@ REST_FRAMEWORK = {
         'custom': '4/m'
     }
 }
+CELERY_TIMEZONE = "Asia/Tehran"
+CELERY_TASK_TIME_LIMIT = 30 * 60
